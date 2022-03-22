@@ -1,4 +1,4 @@
-var life = 3;
+var life = 1;
 var gameState= 0
 var play=0
 var end =1
@@ -17,6 +17,9 @@ diveroverimg= loadImage("images/s1.png")
 gameoverimg= loadImage("images/gameover.png")
 goldcoinimg= loadImage("images/goldcoin.png")
 pearlimg= loadImage("images/pearl.png")
+bite= loadSound("images/bitesound.mp3")
+ching=loadSound("images/coinsound.wav")
+gOver=loadSound("images/go.wav")
 }
 function setup() {
 createCanvas(windowWidth,windowHeight)
@@ -29,7 +32,7 @@ swimmer.setCollider("rectangle",0,0,200,50)
 obstaclesGroup= new Group();
 gameover= createSprite(windowWidth/2, windowHeight/2, 10, 10)
 gameover.addImage(gameoverimg)
-gameover.visible=false
+
 goldGroup= new Group();
 pearlGroup= new Group();
 
@@ -43,8 +46,8 @@ function draw() {
     }
     if(gameState===1){
       
-background (underwaterimg)
-
+background(underwaterimg)
+gameover.visible=false
 if (keyDown("up_arrow")){
     swimmer.y= swimmer.y-5
 }
@@ -56,6 +59,7 @@ for(var i=0;i<obstaclesGroup.length;i++){
     if(obstaclesGroup.get(i).collide(swimmer)){
         obstaclesGroup.get(i).destroy();
         life=life-1
+        bite.play();
     } }
 
     for(var i=0;i<pearlGroup.length;i++){
@@ -68,11 +72,10 @@ for(var i=0;i<obstaclesGroup.length;i++){
         if(goldGroup.get(i).collide(swimmer)){
             goldGroup.get(i).destroy();
             score=score+1
+            ching.play();
         } }
 
-    if (life<=0){
-        gameState=2
-    }
+   
 
 
     
@@ -90,19 +93,30 @@ fill("white")
 textFont("timesnewroman")
 text(player1name+"'s Life : "+life,1000,100)
 text(player1name+"'s Score : "+score,1000,150)
-  }
+
+if (life<=0){
+  gameState=2
 }
-if (gameState===2){
-  text("Game Over", windowWidth/2, windowHeight/2)
+  }
+
+else if (gameState===2){
+  textSize(50)
+stroke("red")
+strokeWeight(3)
+fill("white")
+textFont("timesnewroman")
+  text("Game Over", windowWidth/2-150, windowHeight/2)
   gameover.visible=true
   swimmer.changeAnimation("dead",diveroverimg)
+  //gOver.play()
+}
 }
 function spawnObstacles() {
     if(frameCount % 60 === 0) {
       var obstacle = createSprite(windowWidth,165,10,40);
     obstacle.y=Math.round(random(50,windowHeight))
 
-      obstacle.velocityX = -6
+      obstacle.velocityX = -10
       //-(6 + 3*score/100);
       
       var rand = Math.round(random(1,3));
